@@ -28,6 +28,10 @@ export class TimeSignature {
     return this.beatsInMeasure * this.noteDuration.toNumber();
   }
 
+  toString(): string {
+    return this.beatsInMeasure + '/' + this.noteDuration.toNumber();
+  }
+
   private static validate(noteDuration: NoteDuration): boolean {
     const allowedNoteDurations = [
       new NoteDuration(NoteDurationEnum.HalfNote),

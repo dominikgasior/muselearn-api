@@ -1,6 +1,6 @@
 import { EventStore } from './event-store';
 import { Injectable } from '@nestjs/common';
-import { MikroOrmPersistableEventRepository } from './mikro-orm-persistable-event.repository';
+import { MikroOrmEventStreamEntityRepository } from './mikro-orm-event-stream-entity.repository';
 import { EventEntityMapper } from './event-entity.mapper';
 import { Uuid } from '../../domain/uuid';
 import { DomainEventStream } from '../../domain/domain-event-stream';
@@ -8,7 +8,7 @@ import { DomainEventStream } from '../../domain/domain-event-stream';
 @Injectable()
 export class MikroOrmEventStore implements EventStore {
   constructor(
-    private readonly repository: MikroOrmPersistableEventRepository,
+    private readonly repository: MikroOrmEventStreamEntityRepository,
     private readonly mapper: EventEntityMapper,
   ) {}
 

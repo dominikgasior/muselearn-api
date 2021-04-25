@@ -11,6 +11,10 @@ export class ClefType {
     return new ClefType(clefType);
   }
 
+  toString(): string {
+    return this.type.toString();
+  }
+
   private static validate(clefType: string): clefType is ClefTypeEnum {
     return Object.values(ClefTypeEnum).includes(clefType as ClefTypeEnum);
   }

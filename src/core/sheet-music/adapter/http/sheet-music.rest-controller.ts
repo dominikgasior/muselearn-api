@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post } from '@nestjs/common';
 import { AddMeasureRequestBody } from './request-body/add-measure.request-body';
 import { SheetMusicFacade } from '../../application/boundary/sheet-music.facade';
 import { AddNoteToMeasureRequestBody } from './request-body/add-note-to-measure.request-body';
@@ -8,12 +8,13 @@ import { RemoveNoteFromMeasureRequestBody } from './request-body/remove-note-fro
 import { RemoveNoteFromMeasureRequestModel } from '../../application/boundary/request-model/remove-note-from-measure.request-model';
 import { DeleteMeasureRequestBody } from './request-body/delete-measure.request-body';
 import { DeleteMeasureRequestModel } from '../../application/boundary/request-model/delete-measure.request-model';
+import { MeasureResponseModel } from '../../application/boundary/response-model/measure.response-model';
 
-@Controller('sheet-music/measure')
+@Controller('sheet-music')
 export class SheetMusicRestController {
   constructor(private readonly sheetMusicFacade: SheetMusicFacade) {}
 
-  @Post()
+  @Post('measure')
   async addMeasure(@Body() requestBody: AddMeasureRequestBody): Promise<void> {
     return this.sheetMusicFacade.addMeasure(
       new AddMeasureRequestModel(
@@ -25,7 +26,7 @@ export class SheetMusicRestController {
     );
   }
 
-  @Post('note')
+  @Post('measure/note')
   async addNoteToMeasure(
     @Body() requestBody: AddNoteToMeasureRequestBody,
   ): Promise<void> {
@@ -38,7 +39,7 @@ export class SheetMusicRestController {
     );
   }
 
-  @Delete('note')
+  @Delete('measure/note')
   async removeNoteFromMeasure(
     @Body() requestBody: RemoveNoteFromMeasureRequestBody,
   ): Promise<void> {
@@ -50,12 +51,17 @@ export class SheetMusicRestController {
     );
   }
 
-  @Delete()
+  @Delete('measure')
   async deleteMeasure(
     @Body() requestBody: DeleteMeasureRequestBody,
   ): Promise<void> {
     return this.sheetMusicFacade.deleteMeasure(
       new DeleteMeasureRequestModel(requestBody.id),
     );
+  }
+
+  @Get()
+  async listAllMeasures(): Promise<MeasureResponseModel[]> {
+    return this.sheetMusicFacade.listAllMeasures();
   }
 }

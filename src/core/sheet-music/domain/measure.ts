@@ -15,26 +15,19 @@ import { NoteRemovedFromMeasure } from './event/note-removed-from-measure';
 import { MeasureDeleted } from './event/measure-deleted';
 
 export class Measure extends Aggregate {
+  private id!: MeasureId;
+  private clefType!: ClefType;
+  private timeSignature!: TimeSignature;
   private readonly notes = new Notes();
 
-  private constructor(
-    private readonly id: MeasureId,
-    private readonly clefType: ClefType,
-    private readonly timeSignature: TimeSignature,
-  ) {
+  private constructor() {
     super();
   }
 
   static createFromDomainEventStream(
     domainEventStream: DomainEventStream,
   ): Measure {
-    const measureCreatedEvent = domainEventStream.first().domainEvent;
-
-    if (!(measureCreatedEvent instanceof MeasureCreated)) {
-      throw new Error('First event in the stream should be initializing event');
-    }
-
-    const measure = Measure.applyMeasureCreatedEvent(measureCreatedEvent);
+    const measure = new Measure();
 
     measure.reconstitute(domainEventStream);
 
@@ -47,7 +40,7 @@ export class Measure extends Aggregate {
     timeSignature: TimeSignature,
     now: Date,
   ): Measure {
-    const measure = new Measure(id, clefType, timeSignature);
+    const measure = new Measure();
 
     measure.publish(new MeasureCreated(id.uuid, now, clefType, timeSignature));
 
@@ -87,6 +80,7 @@ export class Measure extends Aggregate {
   apply(event: DomainEvent): void {
     switch (event.constructor) {
       case MeasureCreated:
+        this.applyMeasureCreatedEvent(event as MeasureCreated);
         break;
       case NoteAddedToMeasure:
         this.applyNoteAddedToMeasureEvent(event as NoteAddedToMeasure);
@@ -95,19 +89,17 @@ export class Measure extends Aggregate {
         this.applyNoteRemovedFromMeasureEvent(event as NoteRemovedFromMeasure);
         break;
       case MeasureDeleted:
-        this.applyMeasureDeletedEvent(event as MeasureDeleted);
+        this.applyMeasureDeletedEvent();
         break;
       default:
         throw new Error(`Unknown event type given: ${event.constructor.name}`);
     }
   }
 
-  private static applyMeasureCreatedEvent(event: MeasureCreated): Measure {
-    return new Measure(
-      new MeasureId(event.aggregateId),
-      event.clefType,
-      event.timeSignature,
-    );
+  private applyMeasureCreatedEvent(event: MeasureCreated): void {
+    this.id = new MeasureId(event.aggregateId);
+    this.clefType = event.clefType;
+    this.timeSignature = event.timeSignature;
   }
 
   private applyNoteAddedToMeasureEvent(event: NoteAddedToMeasure): void {
@@ -124,7 +116,7 @@ export class Measure extends Aggregate {
     this.notes.remove(event.noteId);
   }
 
-  private applyMeasureDeletedEvent(event: MeasureDeleted): void {
+  private applyMeasureDeletedEvent(): void {
     this.markAsDeleted();
   }
 }

@@ -27,6 +27,8 @@ export abstract class Aggregate {
 
   protected reconstitute(domainEventStream: DomainEventStream): void {
     domainEventStream.collect().forEach((event) => {
+      this.assertNextEventIsInProperOrder(event);
+
       this.version = event.version;
 
       this.apply(event.domainEvent);
@@ -42,6 +44,12 @@ export abstract class Aggregate {
   private assertAggregateIsNotDeleted(): void {
     if (this.isDeleted) {
       throw new Error('Aggregate is deleted');
+    }
+  }
+
+  private assertNextEventIsInProperOrder(event: PersistableEvent): void {
+    if (this.version + 1 !== event.version) {
+      throw new Error('Given domain event stream is not ordered properly');
     }
   }
 }

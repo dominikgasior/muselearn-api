@@ -10,13 +10,13 @@ export class PersistableEvent {
     discriminator: {
       property: '__type',
       subTypes: [
-        { value: MeasureCreated, name: 'measure-created-event' },
-        { value: NoteAddedToMeasure, name: 'note-added-to-measure-event' },
+        { value: MeasureCreated, name: MeasureCreated.name },
+        { value: NoteAddedToMeasure, name: NoteAddedToMeasure.name },
         {
           value: NoteRemovedFromMeasure,
-          name: 'note-removed-from-measure-event',
+          name: NoteRemovedFromMeasure.name,
         },
-        { value: MeasureDeleted, name: 'measure-deleted' },
+        { value: MeasureDeleted, name: MeasureDeleted.name },
       ],
     },
   })

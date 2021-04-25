@@ -1,4 +1,4 @@
-import { EventEntity } from './event-entity';
+import { EventStreamEntity } from './event-stream.entity';
 import { Injectable } from '@nestjs/common';
 import { PersistableEvent } from '../../domain/persistable-event';
 import { classToPlain, plainToClass } from 'class-transformer';
@@ -8,19 +8,18 @@ import { UuidFactory } from '../../domain/uuid.factory';
 export class EventEntityMapper {
   constructor(private readonly uuidFactory: UuidFactory) {}
 
-  mapToEntity(event: PersistableEvent): EventEntity {
-    const persistableEventJson = classToPlain(event);
-
-    return new EventEntity(
+  mapToEntity(event: PersistableEvent): EventStreamEntity {
+    return new EventStreamEntity(
       this.uuidFactory.generateRandom(),
       event.domainEvent.aggregateId,
       event.version,
       event.domainEvent.occurredAt,
-      persistableEventJson,
+      event.domainEvent.constructor.name,
+      classToPlain(event),
     );
   }
 
-  mapToModel(eventEntity: EventEntity): PersistableEvent {
+  mapToModel(eventEntity: EventStreamEntity): PersistableEvent {
     return plainToClass(PersistableEvent, eventEntity.data);
   }
 }

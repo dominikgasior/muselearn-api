@@ -3,9 +3,9 @@ import { SheetMusicRestController } from '../adapter/http/sheet-music.rest-contr
 import { SheetMusicFacade } from '../application/boundary/sheet-music.facade';
 import { AddMeasureUseCase } from '../application/add-measure.use-case';
 import { CqrsModule } from '@nestjs/cqrs';
-import { MikroOrmPersistableEventRepository } from '../../shared/adapter/event-store/mikro-orm-persistable-event.repository';
+import { MikroOrmEventStreamEntityRepository } from '../../shared/adapter/event-store/mikro-orm-event-stream-entity.repository';
 import { EntityManager } from '@mikro-orm/core';
-import { EventEntity } from '../../shared/adapter/event-store/event-entity';
+import { EventStreamEntity } from '../../shared/adapter/event-store/event-stream.entity';
 import { EventStore } from '../../shared/adapter/event-store/event-store';
 import { MeasureRepository } from '../application/gateway/measure.repository';
 import { MikroOrmMeasureRepository } from '../adapter/repository/mikro-orm-measure.repository';
@@ -16,6 +16,25 @@ import { MikroOrmTransaction } from '../../shared/adapter/transaction/mikro-orm.
 import { AddNoteToMeasureUseCase } from '../application/add-note-to-measure.use-case';
 import { RemoveNoteFromMeasureUseCase } from '../application/remove-note-from-measure.use-case';
 import { DeleteMeasureUseCase } from '../application/delete-measure.use-case';
+import { DomainEventListener } from '../adapter/listener/domain-event.listener';
+import { DomainEventPublisher } from '../application/gateway/domain-event.publisher';
+import { EventEmitterDomainEventPublisher } from '../adapter/domain-event-publisher/event-emitter.domain-event-publisher';
+import { ProjectionService } from '../application/projection/projection.service';
+import { MeasureInVersionProjector } from '../application/projection/measure-in-version.projector';
+import { MikroOrmMeasureInVersionRepository } from '../adapter/repository/mikro-orm-measure-in-version.repository';
+import { MeasureInVersionRepository } from '../application/gateway/measure-in-version.repository';
+import { MeasureInVersionEntityMapper } from '../adapter/repository/measure-in-version-entity.mapper';
+import { MikroOrmMeasureInVersionEntityRepository } from '../adapter/repository/mikro-orm-measure-in-version-entity.repository';
+import { MeasureInVersionEntity } from '../adapter/repository/measure-in-version.entity';
+import { MeasureCurrentProjector } from '../application/projection/measure-current.projector';
+import { MeasureCurrentRepository } from '../application/gateway/measure-current.repository';
+import { MikroOrmMeasureCurrentRepository } from '../adapter/repository/mikro-orm-measure-current.repository';
+import { MikroOrmMeasureCurrentEntityRepository } from '../adapter/repository/mikro-orm-measure-current-entity.repository';
+import { MeasureCurrentEntity } from '../adapter/repository/measure-current.entity';
+import { MeasureCurrentEntityMapper } from '../adapter/repository/measure-current-entity.mapper';
+import { ListAllMeasuresUseCase } from '../application/list-all-measures.use-case';
+import { ListAllMeasuresDataProvider } from '../application/gateway/list-all-measures.data-provider';
+import { MikroOrmListAllMeasuresDataProvider } from '../adapter/data-provider/list-all-measures/mikro-orm-list-all-measures.data-provider';
 
 @Module({
   imports: [CqrsModule],
@@ -24,9 +43,9 @@ import { DeleteMeasureUseCase } from '../application/delete-measure.use-case';
     SheetMusicFacade,
     AddMeasureUseCase,
     {
-      provide: MikroOrmPersistableEventRepository,
+      provide: MikroOrmEventStreamEntityRepository,
       useFactory: (entityManager: EntityManager) =>
-        entityManager.getRepository(EventEntity),
+        entityManager.getRepository(EventStreamEntity),
       inject: [EntityManager],
     },
     {
@@ -45,6 +64,41 @@ import { DeleteMeasureUseCase } from '../application/delete-measure.use-case';
     AddNoteToMeasureUseCase,
     RemoveNoteFromMeasureUseCase,
     DeleteMeasureUseCase,
+    {
+      provide: DomainEventPublisher,
+      useClass: EventEmitterDomainEventPublisher,
+    },
+    ProjectionService,
+    MeasureInVersionProjector,
+    {
+      provide: MeasureInVersionRepository,
+      useClass: MikroOrmMeasureInVersionRepository,
+    },
+    DomainEventListener,
+    MeasureInVersionEntityMapper,
+    {
+      provide: MikroOrmMeasureInVersionEntityRepository,
+      useFactory: (entityManager: EntityManager) =>
+        entityManager.getRepository(MeasureInVersionEntity),
+      inject: [EntityManager],
+    },
+    MeasureCurrentProjector,
+    {
+      provide: MeasureCurrentRepository,
+      useClass: MikroOrmMeasureCurrentRepository,
+    },
+    {
+      provide: MikroOrmMeasureCurrentEntityRepository,
+      useFactory: (entityManager: EntityManager) =>
+        entityManager.getRepository(MeasureCurrentEntity),
+      inject: [EntityManager],
+    },
+    MeasureCurrentEntityMapper,
+    ListAllMeasuresUseCase,
+    {
+      provide: ListAllMeasuresDataProvider,
+      useClass: MikroOrmListAllMeasuresDataProvider,
+    },
   ],
 })
 export class SheetMusicModule {}

@@ -1,6 +1,6 @@
 import { AddMeasureCommand } from '../command/add-measure.command';
 import { Injectable } from '@nestjs/common';
-import { CommandBus } from '@nestjs/cqrs';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { AddNoteToMeasureCommand } from '../command/add-note-to-measure.command';
 import { AddMeasureRequestModel } from './request-model/add-measure.request-model';
 import { MeasureId } from '../../domain/measure-id';
@@ -14,10 +14,15 @@ import { RemoveNoteFromMeasureRequestModel } from './request-model/remove-note-f
 import { RemoveNoteFromMeasureCommand } from '../command/remove-note-from-measure.command';
 import { DeleteMeasureRequestModel } from './request-model/delete-measure.request-model';
 import { DeleteMeasureCommand } from '../command/delete-measure.command';
+import { ListAllMeasuresQuery } from '../query/list-all-measures.query';
+import { MeasureResponseModel } from './response-model/measure.response-model';
 
 @Injectable()
 export class SheetMusicFacade {
-  constructor(private readonly commandBus: CommandBus) {}
+  constructor(
+    private readonly commandBus: CommandBus,
+    private readonly queryBus: QueryBus,
+  ) {}
 
   async addMeasure(requestModel: AddMeasureRequestModel): Promise<void> {
     return this.commandBus.execute(
@@ -59,5 +64,9 @@ export class SheetMusicFacade {
     return this.commandBus.execute(
       new DeleteMeasureCommand(new MeasureId(Uuid.create(requestModel.id))),
     );
+  }
+
+  async listAllMeasures(): Promise<MeasureResponseModel[]> {
+    return this.queryBus.execute(new ListAllMeasuresQuery());
   }
 }

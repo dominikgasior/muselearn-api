@@ -1,35 +1,30 @@
 import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
-import { Uuid } from '../../domain/uuid';
+import { Uuid } from '../../../shared/domain/uuid';
 import { UuidType } from '../../../../infrastructure/uuid.type';
 
-@Entity({ tableName: 'event_stream' })
-export class EventEntity {
-  @Property({ type: UuidType })
-  private readonly id: Uuid;
-
+@Entity({ tableName: 'measure_in_version' })
+export class MeasureInVersionEntity {
   @PrimaryKey({ type: UuidType })
-  private readonly aggregateId: Uuid;
+  public readonly id: Uuid;
 
   @PrimaryKey()
   public readonly version: number;
 
   @Property()
-  public readonly occurredAt: Date;
+  public readonly aggregateCreatedAt: Date;
 
   @Property({ type: 'json' })
   public readonly data: Record<string, unknown>;
 
   constructor(
     id: Uuid,
-    aggregateId: Uuid,
     version: number,
-    occurredAt: Date,
+    aggregateCreatedAt: Date,
     data: Record<string, unknown>,
   ) {
     this.id = id;
-    this.aggregateId = aggregateId;
     this.version = version;
-    this.occurredAt = occurredAt;
+    this.aggregateCreatedAt = aggregateCreatedAt;
     this.data = data;
   }
 }

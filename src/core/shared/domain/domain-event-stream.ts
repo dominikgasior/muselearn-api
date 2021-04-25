@@ -1,7 +1,7 @@
 import { PersistableEvent } from './persistable-event';
 
 export class DomainEventStream {
-  private events: PersistableEvent[] = [];
+  constructor(private events: PersistableEvent[] = []) {}
 
   append(event: PersistableEvent): void {
     this.events.push(event);
@@ -10,18 +10,24 @@ export class DomainEventStream {
   collect(): PersistableEvent[] {
     this.assertThatHasAtLeastOneEvent();
 
-    return this.events;
+    const events = this.events;
+
+    this.flush();
+
+    return events;
   }
 
-  first(): PersistableEvent {
-    this.assertThatHasAtLeastOneEvent();
+  copy(): DomainEventStream {
+    return new DomainEventStream(this.events);
+  }
 
-    return this.events[0];
+  private flush(): void {
+    this.events = [];
   }
 
   private assertThatHasAtLeastOneEvent(): void {
     if (this.events.length === 0) {
-      throw new Error('There are no events in the current domain event stream');
+      throw new Error('There are no events in the current stream');
     }
   }
 }
