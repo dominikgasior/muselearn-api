@@ -1,8 +1,8 @@
-import { MeasureRepository } from '../../application/gateway/measure.repository';
-import { Measure } from '../../domain/measure';
-import { EventStore } from '../../../shared/adapter/event-store/event-store';
+import { MeasureRepository } from '../../../application/gateway/measure.repository';
+import { Measure } from '../../../domain/measure';
+import { EventStore } from '../../../../shared/adapter/event-store/event-store';
 import { Injectable } from '@nestjs/common';
-import { MeasureId } from '../../domain/measure-id';
+import { MeasureId } from '../../../domain/measure-id';
 
 @Injectable()
 export class MikroOrmMeasureRepository implements MeasureRepository {

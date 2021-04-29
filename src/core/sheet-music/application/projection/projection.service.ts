@@ -1,15 +1,15 @@
 import { MeasureCreated } from '../../domain/event/measure-created';
-import { MeasureInVersionProjector } from './measure-in-version.projector';
+import { SheetMusicInVersionProjector } from './sheet-music-in-version/sheet-music-in-version.projector';
 import { Injectable } from '@nestjs/common';
 import { NoteAddedToMeasure } from '../../domain/event/note-added-to-measure';
 import { NoteRemovedFromMeasure } from '../../domain/event/note-removed-from-measure';
 import { MeasureDeleted } from '../../domain/event/measure-deleted';
-import { MeasureCurrentProjector } from './measure-current.projector';
+import { MeasureCurrentProjector } from './measure-current/measure-current.projector';
 
 @Injectable()
 export class ProjectionService {
   constructor(
-    private readonly measureInVersionProjector: MeasureInVersionProjector,
+    private readonly measureInVersionProjector: SheetMusicInVersionProjector,
     private readonly measureCurrentProjector: MeasureCurrentProjector,
   ) {}
 
@@ -25,7 +25,7 @@ export class ProjectionService {
 
   applyNoteAddedToMeasure(event: NoteAddedToMeasure, version: number): void {
     this.measureInVersionProjector
-      .applyNoteAddedToMeasure(event, version)
+      .applyNoteAddedToMeasure(event)
       .catch(console.error);
 
     this.measureCurrentProjector
@@ -38,7 +38,7 @@ export class ProjectionService {
     version: number,
   ): void {
     this.measureInVersionProjector
-      .applyNoteRemovedFromMeasure(event, version)
+      .applyNoteRemovedFromMeasure(event)
       .catch(console.error);
 
     this.measureCurrentProjector
@@ -46,9 +46,9 @@ export class ProjectionService {
       .catch(console.error);
   }
 
-  applyMeasureDeleted(event: MeasureDeleted, version: number): void {
+  applyMeasureDeleted(event: MeasureDeleted): void {
     this.measureInVersionProjector
-      .applyMeasureDeleted(event, version)
+      .applyMeasureDeleted(event)
       .catch(console.error);
 
     this.measureCurrentProjector

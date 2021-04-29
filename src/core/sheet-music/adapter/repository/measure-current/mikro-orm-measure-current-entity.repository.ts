@@ -2,7 +2,7 @@ import { EntityRepository } from '@mikro-orm/postgresql';
 import { MeasureCurrentEntity } from './measure-current.entity';
 import { Repository } from '@mikro-orm/core';
 import { Injectable } from '@nestjs/common';
-import { Uuid } from '../../../shared/domain/uuid';
+import { Uuid } from '../../../../shared/domain/uuid';
 
 @Injectable()
 @Repository(MeasureCurrentEntity)

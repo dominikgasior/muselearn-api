@@ -1,20 +1,20 @@
 import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
-import { Uuid } from '../../../shared/domain/uuid';
-import { UuidType } from '../../../../infrastructure/uuid.type';
+import { UuidType } from '../../../../../infrastructure/uuid.type';
+import { Uuid } from '../../../../shared/domain/uuid';
 
-@Entity({ tableName: 'measure_in_version' })
-export class MeasureInVersionEntity {
+@Entity({ tableName: 'measure_current' })
+export class MeasureCurrentEntity {
   @PrimaryKey({ type: UuidType })
   public readonly id: Uuid;
 
-  @PrimaryKey()
+  @Property()
   public readonly version: number;
 
-  @Property()
+  @PrimaryKey()
   public readonly aggregateCreatedAt: Date;
 
   @Property({ type: 'json' })
-  public readonly data: Record<string, unknown>;
+  public data: Record<string, unknown>;
 
   constructor(
     id: Uuid,

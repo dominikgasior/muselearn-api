@@ -38,7 +38,6 @@ export class DomainEventListener {
   async onMeasureDeleted(event: PersistableEvent): Promise<void> {
     return this.projectionService.applyMeasureDeleted(
       event.domainEvent as MeasureDeleted,
-      event.version,
     );
   }
 }

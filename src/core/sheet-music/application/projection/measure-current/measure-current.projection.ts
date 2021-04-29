@@ -1,28 +1,27 @@
-import { Projection } from '../../../shared/application/projection';
-import { MeasureCreated } from '../../domain/event/measure-created';
-import { NoteAddedToMeasure } from '../../domain/event/note-added-to-measure';
 import { Type } from 'class-transformer';
-import { NoteRemovedFromMeasure } from '../../domain/event/note-removed-from-measure';
-import { Note } from './note';
+import { MeasureCreated } from '../../../domain/event/measure-created';
+import { NoteAddedToMeasure } from '../../../domain/event/note-added-to-measure';
+import { NoteRemovedFromMeasure } from '../../../domain/event/note-removed-from-measure';
 
-export class MeasureInVersionProjection extends Projection {
+export interface Note {
+  id: string;
+  noteDuration: number;
+}
+
+export class MeasureCurrentProjection {
   @Type(() => Map)
   public readonly notes: Map<string, Note> = new Map();
 
   constructor(
-    version: number,
+    public version: number,
     public readonly id: string,
     public readonly clefType: string,
     public readonly timeSignature: string,
     public readonly aggregateCreatedAt: string,
-  ) {
-    super(version);
-  }
+  ) {}
 
-  static applyMeasureCreated(
-    event: MeasureCreated,
-  ): MeasureInVersionProjection {
-    return new MeasureInVersionProjection(
+  static applyMeasureCreated(event: MeasureCreated): MeasureCurrentProjection {
+    return new MeasureCurrentProjection(
       1,
       event.aggregateId.toString(),
       event.clefType.toString(),
@@ -47,12 +46,6 @@ export class MeasureInVersionProjection extends Projection {
     version: number,
   ): void {
     this.notes.delete(event.noteId.uuid.toString());
-
-    this.version = version;
-  }
-
-  applyMeasureDeleted(version: number): void {
-    this.isDeleted = true;
 
     this.version = version;
   }

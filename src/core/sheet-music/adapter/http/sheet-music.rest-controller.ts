@@ -8,7 +8,7 @@ import { RemoveNoteFromMeasureRequestBody } from './request-body/remove-note-fro
 import { RemoveNoteFromMeasureRequestModel } from '../../application/boundary/request-model/remove-note-from-measure.request-model';
 import { DeleteMeasureRequestBody } from './request-body/delete-measure.request-body';
 import { DeleteMeasureRequestModel } from '../../application/boundary/request-model/delete-measure.request-model';
-import { MeasureResponseModel } from '../../application/boundary/response-model/measure.response-model';
+import { SheetMusicHistoryResponseModel } from '../../application/boundary/response-model/sheet-music-history.response-model';
 
 @Controller('sheet-music')
 export class SheetMusicRestController {
@@ -61,7 +61,7 @@ export class SheetMusicRestController {
   }
 
   @Get()
-  async listAllMeasures(): Promise<MeasureResponseModel[]> {
-    return this.sheetMusicFacade.listAllMeasures();
+  async showHistory(): Promise<SheetMusicHistoryResponseModel[]> {
+    return this.sheetMusicFacade.showHistory();
   }
 }

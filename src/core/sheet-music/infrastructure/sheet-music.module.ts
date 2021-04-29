@@ -8,7 +8,7 @@ import { EntityManager } from '@mikro-orm/core';
 import { EventStreamEntity } from '../../shared/adapter/event-store/event-stream.entity';
 import { EventStore } from '../../shared/adapter/event-store/event-store';
 import { MeasureRepository } from '../application/gateway/measure.repository';
-import { MikroOrmMeasureRepository } from '../adapter/repository/mikro-orm-measure.repository';
+import { MikroOrmMeasureRepository } from '../adapter/repository/measure/mikro-orm-measure.repository';
 import { EventEntityMapper } from '../../shared/adapter/event-store/event-entity.mapper';
 import { MikroOrmEventStore } from '../../shared/adapter/event-store/mikro-orm.event-store';
 import { Transaction } from '../../shared/application/gateway/transaction';
@@ -20,21 +20,21 @@ import { DomainEventListener } from '../adapter/listener/domain-event.listener';
 import { DomainEventPublisher } from '../application/gateway/domain-event.publisher';
 import { EventEmitterDomainEventPublisher } from '../adapter/domain-event-publisher/event-emitter.domain-event-publisher';
 import { ProjectionService } from '../application/projection/projection.service';
-import { MeasureInVersionProjector } from '../application/projection/measure-in-version.projector';
-import { MikroOrmMeasureInVersionRepository } from '../adapter/repository/mikro-orm-measure-in-version.repository';
-import { MeasureInVersionRepository } from '../application/gateway/measure-in-version.repository';
-import { MeasureInVersionEntityMapper } from '../adapter/repository/measure-in-version-entity.mapper';
-import { MikroOrmMeasureInVersionEntityRepository } from '../adapter/repository/mikro-orm-measure-in-version-entity.repository';
-import { MeasureInVersionEntity } from '../adapter/repository/measure-in-version.entity';
-import { MeasureCurrentProjector } from '../application/projection/measure-current.projector';
+import { SheetMusicInVersionProjector } from '../application/projection/sheet-music-in-version/sheet-music-in-version.projector';
+import { MikroOrmSheetMusicInVersionRepository } from '../adapter/repository/sheet-music-in-version/mikro-orm-sheet-music-in-version.repository';
+import { SheetMusicInVersionRepository } from '../application/gateway/sheet-music-in-version.repository';
+import { SheetMusicInVersionEntityMapper } from '../adapter/repository/sheet-music-in-version/sheet-music-in-version-entity.mapper';
+import { MikroOrmSheetMusicInVersionEntityRepository } from '../adapter/repository/sheet-music-in-version/mikro-orm-sheet-music-in-version-entity.repository';
+import { SheetMusicInVersionEntity } from '../adapter/repository/sheet-music-in-version/sheet-music-in-version.entity';
+import { MeasureCurrentProjector } from '../application/projection/measure-current/measure-current.projector';
 import { MeasureCurrentRepository } from '../application/gateway/measure-current.repository';
-import { MikroOrmMeasureCurrentRepository } from '../adapter/repository/mikro-orm-measure-current.repository';
-import { MikroOrmMeasureCurrentEntityRepository } from '../adapter/repository/mikro-orm-measure-current-entity.repository';
-import { MeasureCurrentEntity } from '../adapter/repository/measure-current.entity';
-import { MeasureCurrentEntityMapper } from '../adapter/repository/measure-current-entity.mapper';
-import { ListAllMeasuresUseCase } from '../application/list-all-measures.use-case';
-import { ListAllMeasuresDataProvider } from '../application/gateway/list-all-measures.data-provider';
-import { MikroOrmListAllMeasuresDataProvider } from '../adapter/data-provider/list-all-measures/mikro-orm-list-all-measures.data-provider';
+import { MikroOrmMeasureCurrentRepository } from '../adapter/repository/measure-current/mikro-orm-measure-current.repository';
+import { MikroOrmMeasureCurrentEntityRepository } from '../adapter/repository/measure-current/mikro-orm-measure-current-entity.repository';
+import { MeasureCurrentEntity } from '../adapter/repository/measure-current/measure-current.entity';
+import { MeasureCurrentEntityMapper } from '../adapter/repository/measure-current/measure-current-entity.mapper';
+import { ShowSheetMusicHistoryUseCase } from '../application/show-sheet-music-history.use-case';
+import { ShowSheetMusicHistoryDataProvider } from '../application/gateway/show-sheet-music-history.data-provider';
+import { MikroOrmShowSheetMusicHistoryDataProvider } from '../adapter/data-provider/show-sheet-music-history/mikro-orm-show-sheet-music-history.data-provider';
 
 @Module({
   imports: [CqrsModule],
@@ -69,17 +69,17 @@ import { MikroOrmListAllMeasuresDataProvider } from '../adapter/data-provider/li
       useClass: EventEmitterDomainEventPublisher,
     },
     ProjectionService,
-    MeasureInVersionProjector,
+    SheetMusicInVersionProjector,
     {
-      provide: MeasureInVersionRepository,
-      useClass: MikroOrmMeasureInVersionRepository,
+      provide: SheetMusicInVersionRepository,
+      useClass: MikroOrmSheetMusicInVersionRepository,
     },
     DomainEventListener,
-    MeasureInVersionEntityMapper,
+    SheetMusicInVersionEntityMapper,
     {
-      provide: MikroOrmMeasureInVersionEntityRepository,
+      provide: MikroOrmSheetMusicInVersionEntityRepository,
       useFactory: (entityManager: EntityManager) =>
-        entityManager.getRepository(MeasureInVersionEntity),
+        entityManager.getRepository(SheetMusicInVersionEntity),
       inject: [EntityManager],
     },
     MeasureCurrentProjector,
@@ -94,10 +94,10 @@ import { MikroOrmListAllMeasuresDataProvider } from '../adapter/data-provider/li
       inject: [EntityManager],
     },
     MeasureCurrentEntityMapper,
-    ListAllMeasuresUseCase,
+    ShowSheetMusicHistoryUseCase,
     {
-      provide: ListAllMeasuresDataProvider,
-      useClass: MikroOrmListAllMeasuresDataProvider,
+      provide: ShowSheetMusicHistoryDataProvider,
+      useClass: MikroOrmShowSheetMusicHistoryDataProvider,
     },
   ],
 })

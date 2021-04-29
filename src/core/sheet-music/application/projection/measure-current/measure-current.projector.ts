@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { Transaction } from '../../../shared/application/gateway/transaction';
-import { MeasureCreated } from '../../domain/event/measure-created';
+import { Transaction } from '../../../../shared/application/gateway/transaction';
+import { MeasureCreated } from '../../../domain/event/measure-created';
 import { MeasureCurrentProjection } from './measure-current.projection';
-import { MeasureCurrentRepository } from '../gateway/measure-current.repository';
-import { NoteAddedToMeasure } from '../../domain/event/note-added-to-measure';
-import { NoteRemovedFromMeasure } from '../../domain/event/note-removed-from-measure';
-import { MeasureDeleted } from '../../domain/event/measure-deleted';
+import { MeasureCurrentRepository } from '../../gateway/measure-current.repository';
+import { NoteAddedToMeasure } from '../../../domain/event/note-added-to-measure';
+import { NoteRemovedFromMeasure } from '../../../domain/event/note-removed-from-measure';
+import { MeasureDeleted } from '../../../domain/event/measure-deleted';
 
 @Injectable()
 export class MeasureCurrentProjector {

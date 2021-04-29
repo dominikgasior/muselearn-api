@@ -1,9 +1,9 @@
-import { MeasureCurrentRepository } from '../../application/gateway/measure-current.repository';
-import { MeasureCurrentProjection } from '../../application/projection/measure-current.projection';
+import { MeasureCurrentRepository } from '../../../application/gateway/measure-current.repository';
+import { MeasureCurrentProjection } from '../../../application/projection/measure-current/measure-current.projection';
 import { Injectable } from '@nestjs/common';
 import { MikroOrmMeasureCurrentEntityRepository } from './mikro-orm-measure-current-entity.repository';
 import { MeasureCurrentEntityMapper } from './measure-current-entity.mapper';
-import { Uuid } from '../../../shared/domain/uuid';
+import { Uuid } from '../../../../shared/domain/uuid';
 import { LockMode } from '@mikro-orm/core';
 
 @Injectable()

@@ -1,4 +1,4 @@
-import { MeasureCurrentProjection } from '../projection/measure-current.projection';
+import { MeasureCurrentProjection } from '../projection/measure-current/measure-current.projection';
 import { Uuid } from '../../../shared/domain/uuid';
 
 export abstract class MeasureCurrentRepository {

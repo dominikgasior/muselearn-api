@@ -14,8 +14,8 @@ import { RemoveNoteFromMeasureRequestModel } from './request-model/remove-note-f
 import { RemoveNoteFromMeasureCommand } from '../command/remove-note-from-measure.command';
 import { DeleteMeasureRequestModel } from './request-model/delete-measure.request-model';
 import { DeleteMeasureCommand } from '../command/delete-measure.command';
-import { ListAllMeasuresQuery } from '../query/list-all-measures.query';
-import { MeasureResponseModel } from './response-model/measure.response-model';
+import { ShowSheetMusicHistoryQuery } from '../query/show-sheet-music-history.query';
+import { SheetMusicHistoryResponseModel } from './response-model/sheet-music-history.response-model';
 
 @Injectable()
 export class SheetMusicFacade {
@@ -66,7 +66,7 @@ export class SheetMusicFacade {
     );
   }
 
-  async listAllMeasures(): Promise<MeasureResponseModel[]> {
-    return this.queryBus.execute(new ListAllMeasuresQuery());
+  async showHistory(): Promise<SheetMusicHistoryResponseModel[]> {
+    return this.queryBus.execute(new ShowSheetMusicHistoryQuery());
   }
 }
