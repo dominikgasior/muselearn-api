@@ -1,6 +1,7 @@
 import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
 import { UuidType } from '../../../../../infrastructure/uuid.type';
 import { Uuid } from '../../../../shared/domain/uuid';
+import { JsonType } from '../../../../../infrastructure/json.type';
 
 @Entity({ tableName: 'measure_current' })
 export class MeasureCurrentEntity {
@@ -13,7 +14,7 @@ export class MeasureCurrentEntity {
   @PrimaryKey()
   public readonly aggregateCreatedAt: Date;
 
-  @Property({ type: 'json' })
+  @Property({ type: JsonType })
   public data: Record<string, unknown>;
 
   constructor(

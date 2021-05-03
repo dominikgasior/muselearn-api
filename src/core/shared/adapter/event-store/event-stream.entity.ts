@@ -1,6 +1,7 @@
 import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
 import { Uuid } from '../../domain/uuid';
 import { UuidType } from '../../../../infrastructure/uuid.type';
+import { JsonType } from '../../../../infrastructure/json.type';
 
 @Entity({ tableName: 'event_stream' })
 export class EventStreamEntity {
@@ -19,7 +20,7 @@ export class EventStreamEntity {
   @Property()
   public readonly type: string;
 
-  @Property({ type: 'json' })
+  @Property({ type: JsonType })
   public readonly data: Record<string, unknown>;
 
   constructor(
