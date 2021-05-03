@@ -38,6 +38,9 @@ import { MikroOrmShowSheetMusicHistoryDataProvider } from '../adapter/data-provi
 import { ShowSheetMusicInVersionUseCase } from '../application/show-sheet-music-in-version.use-case';
 import { ShowSheetMusicInVersionDataProvider } from '../application/gateway/show-sheet-music-in-version.data-provider';
 import { MikroOrmShowSheetMusicInVersionDataProvider } from '../adapter/data-provider/show-sheet-music-in-version/mikro-orm-show-sheet-music-in-version.data-provider';
+import { ShowCurrentSheetMusicUseCase } from '../application/show-current-sheet-music.use-case';
+import { ShowCurrentSheetMusicDataProvider } from '../application/gateway/show-current-sheet-music.data-provider';
+import { MikroOrmShowCurrentSheetMusicDataProvider } from '../adapter/data-provider/show-current-sheet-music/mikro-orm-show-current-sheet-music.data-provider';
 
 @Module({
   imports: [CqrsModule],
@@ -106,6 +109,11 @@ import { MikroOrmShowSheetMusicInVersionDataProvider } from '../adapter/data-pro
     {
       provide: ShowSheetMusicInVersionDataProvider,
       useClass: MikroOrmShowSheetMusicInVersionDataProvider,
+    },
+    ShowCurrentSheetMusicUseCase,
+    {
+      provide: ShowCurrentSheetMusicDataProvider,
+      useClass: MikroOrmShowCurrentSheetMusicDataProvider,
     },
   ],
 })

@@ -75,4 +75,9 @@ export class SheetMusicRestController {
       new ShowSheetMusicInVersionRequestModel(version),
     );
   }
+
+  @Get('current')
+  async showCurrentVersion(): Promise<MeasureResponseModel[]> {
+    return this.sheetMusicFacade.showCurrent();
+  }
 }
