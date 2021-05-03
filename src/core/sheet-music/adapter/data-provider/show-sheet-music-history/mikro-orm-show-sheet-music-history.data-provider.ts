@@ -1,29 +1,15 @@
 import { ShowSheetMusicHistoryDataProvider } from '../../../application/gateway/show-sheet-music-history.data-provider';
-import {
-  MeasureResponseModel,
-  SheetMusicHistoryResponseModel,
-} from '../../../application/boundary/response-model/sheet-music-history.response-model';
+import { SheetMusicHistoryResponseModel } from '../../../application/boundary/response-model/sheet-music-history.response-model';
 import { EntityManager } from '@mikro-orm/postgresql';
 import { Injectable } from '@nestjs/common';
 import { SheetMusicInVersionEntity } from '../../repository/sheet-music-in-version/sheet-music-in-version.entity';
+import { MeasureResponseModel } from '../../../application/boundary/response-model/measure.response-model';
+import { MeasureResponseModelData } from '../measure-response-model-data';
 
 interface QueryResult {
   version: number;
   type: string;
   data: { measures: { [id: string]: MeasureResponseModelData } };
-}
-
-interface MeasureResponseModelData {
-  id: string;
-  notes: { [id: string]: Note };
-  clefType: string;
-  timeSignature: string;
-  aggregateCreatedAt: string;
-}
-
-interface Note {
-  id: string;
-  noteDuration: number;
 }
 
 @Injectable()

@@ -35,6 +35,9 @@ import { MeasureCurrentEntityMapper } from '../adapter/repository/measure-curren
 import { ShowSheetMusicHistoryUseCase } from '../application/show-sheet-music-history.use-case';
 import { ShowSheetMusicHistoryDataProvider } from '../application/gateway/show-sheet-music-history.data-provider';
 import { MikroOrmShowSheetMusicHistoryDataProvider } from '../adapter/data-provider/show-sheet-music-history/mikro-orm-show-sheet-music-history.data-provider';
+import { ShowSheetMusicInVersionUseCase } from '../application/show-sheet-music-in-version.use-case';
+import { ShowSheetMusicInVersionDataProvider } from '../application/gateway/show-sheet-music-in-version.data-provider';
+import { MikroOrmShowSheetMusicInVersionDataProvider } from '../adapter/data-provider/show-sheet-music-in-version/mikro-orm-show-sheet-music-in-version.data-provider';
 
 @Module({
   imports: [CqrsModule],
@@ -98,6 +101,11 @@ import { MikroOrmShowSheetMusicHistoryDataProvider } from '../adapter/data-provi
     {
       provide: ShowSheetMusicHistoryDataProvider,
       useClass: MikroOrmShowSheetMusicHistoryDataProvider,
+    },
+    ShowSheetMusicInVersionUseCase,
+    {
+      provide: ShowSheetMusicInVersionDataProvider,
+      useClass: MikroOrmShowSheetMusicInVersionDataProvider,
     },
   ],
 })

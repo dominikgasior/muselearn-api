@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { AddMeasureRequestBody } from './request-body/add-measure.request-body';
 import { SheetMusicFacade } from '../../application/boundary/sheet-music.facade';
 import { AddNoteToMeasureRequestBody } from './request-body/add-note-to-measure.request-body';
@@ -9,6 +9,8 @@ import { RemoveNoteFromMeasureRequestModel } from '../../application/boundary/re
 import { DeleteMeasureRequestBody } from './request-body/delete-measure.request-body';
 import { DeleteMeasureRequestModel } from '../../application/boundary/request-model/delete-measure.request-model';
 import { SheetMusicHistoryResponseModel } from '../../application/boundary/response-model/sheet-music-history.response-model';
+import { MeasureResponseModel } from '../../application/boundary/response-model/measure.response-model';
+import { ShowSheetMusicInVersionRequestModel } from '../../application/boundary/request-model/show-sheet-music-in-version.request-model';
 
 @Controller('sheet-music')
 export class SheetMusicRestController {
@@ -63,5 +65,14 @@ export class SheetMusicRestController {
   @Get()
   async showHistory(): Promise<SheetMusicHistoryResponseModel[]> {
     return this.sheetMusicFacade.showHistory();
+  }
+
+  @Get('version/:version')
+  async showInVersion(
+    @Param('version') version: number,
+  ): Promise<MeasureResponseModel[]> {
+    return this.sheetMusicFacade.showInVersion(
+      new ShowSheetMusicInVersionRequestModel(version),
+    );
   }
 }
