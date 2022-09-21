@@ -9,7 +9,6 @@ import { ClefType } from './clef-type';
 import { TimeSignature } from './time-signature';
 import { NoteDuration } from './note-duration';
 import { Notes } from './notes';
-import { AddNoteSpecification } from './add-note-specification';
 import { Note } from './note';
 import { NoteRemovedFromMeasure } from './event/note-removed-from-measure';
 import { MeasureDeleted } from './event/measure-deleted';
@@ -48,14 +47,13 @@ export class Measure extends Aggregate {
   }
 
   addNote(noteId: NoteId, noteDuration: NoteDuration, now: Date): void {
-    const addNoteSpecification = new AddNoteSpecification();
+    const measureNoteDurationSum = this.notes.sumUpAllNoteDurations();
+    const totalMeasureNoteDurationNumber = this.timeSignature.toTotalMeasureNoteDurationNumber();
+    const noteDurationNumberToAdd = noteDuration.toNumber();
 
     if (
-      !addNoteSpecification.isSatisfiedBy(
-        this.notes,
-        this.timeSignature,
-        noteDuration,
-      )
+      measureNoteDurationSum + noteDurationNumberToAdd >
+      totalMeasureNoteDurationNumber
     ) {
       throw new Error('Cannot add note to measure');
     }
@@ -94,6 +92,10 @@ export class Measure extends Aggregate {
       default:
         throw new Error(`Unknown event type given: ${event.constructor.name}`);
     }
+  }
+
+  getId(): MeasureId {
+    return this.id;
   }
 
   private applyMeasureCreatedEvent(event: MeasureCreated): void {

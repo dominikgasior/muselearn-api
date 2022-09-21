@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
-import { SheetMusicModule } from './core/sheet-music/infrastructure/sheet-music.module';
-import { InfrastructureModule } from './infrastructure/infrastructure.module';
-import { SharedModule } from './core/shared/infrastructure/shared.module';
+import {
+  Environment,
+  SheetMusicModule,
+} from './core/sheet-music/infrastructure/sheet-music.module';
 
 @Module({
-  imports: [InfrastructureModule, SharedModule, SheetMusicModule],
+  imports: [SheetMusicModule.register(Environment.PRODUCTION)],
 })
 export class AppModule {}

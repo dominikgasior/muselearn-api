@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { DynamicModule, Module } from '@nestjs/common';
 import { SheetMusicRestController } from '../adapter/http/sheet-music.rest-controller';
 import { SheetMusicFacade } from '../application/boundary/sheet-music.facade';
 import { AddMeasureUseCase } from '../application/add-measure.use-case';
@@ -41,80 +41,104 @@ import { MikroOrmShowSheetMusicInVersionDataProvider } from '../adapter/data-pro
 import { ShowCurrentSheetMusicUseCase } from '../application/show-current-sheet-music.use-case';
 import { ShowCurrentSheetMusicDataProvider } from '../application/gateway/show-current-sheet-music.data-provider';
 import { MikroOrmShowCurrentSheetMusicDataProvider } from '../adapter/data-provider/show-current-sheet-music/mikro-orm-show-current-sheet-music.data-provider';
+import { InMemoryMeasureRepository } from '../adapter/repository/measure/in-memory-measure.repository';
+import { SharedModule } from '../../shared/infrastructure/shared.module';
+import { InfrastructureModule } from '../../../infrastructure/infrastructure.module';
+import { DirectExecutionTransaction } from '../../shared/adapter/transaction/direct-execution.transaction';
+import { MockedDomainEventPublisher } from '../adapter/domain-event-publisher/mocked.domain-event-publisher';
 
-@Module({
-  imports: [CqrsModule],
-  controllers: [SheetMusicRestController],
-  providers: [
-    SheetMusicFacade,
-    AddMeasureUseCase,
-    {
-      provide: MikroOrmEventStreamEntityRepository,
-      useFactory: (entityManager: EntityManager) =>
-        entityManager.getRepository(EventStreamEntity),
-      inject: [EntityManager],
-    },
-    {
-      provide: MeasureRepository,
-      useClass: MikroOrmMeasureRepository,
-    },
-    EventEntityMapper,
-    {
-      provide: EventStore,
-      useClass: MikroOrmEventStore,
-    },
-    {
-      provide: Transaction,
-      useClass: MikroOrmTransaction,
-    },
-    AddNoteToMeasureUseCase,
-    RemoveNoteFromMeasureUseCase,
-    DeleteMeasureUseCase,
-    {
-      provide: DomainEventPublisher,
-      useClass: EventEmitterDomainEventPublisher,
-    },
-    ProjectionService,
-    SheetMusicInVersionProjector,
-    {
-      provide: SheetMusicInVersionRepository,
-      useClass: MikroOrmSheetMusicInVersionRepository,
-    },
-    DomainEventListener,
-    SheetMusicInVersionEntityMapper,
-    {
-      provide: MikroOrmSheetMusicInVersionEntityRepository,
-      useFactory: (entityManager: EntityManager) =>
-        entityManager.getRepository(SheetMusicInVersionEntity),
-      inject: [EntityManager],
-    },
-    MeasureCurrentProjector,
-    {
-      provide: MeasureCurrentRepository,
-      useClass: MikroOrmMeasureCurrentRepository,
-    },
-    {
-      provide: MikroOrmMeasureCurrentEntityRepository,
-      useFactory: (entityManager: EntityManager) =>
-        entityManager.getRepository(MeasureCurrentEntity),
-      inject: [EntityManager],
-    },
-    MeasureCurrentEntityMapper,
-    ShowSheetMusicHistoryUseCase,
-    {
-      provide: ShowSheetMusicHistoryDataProvider,
-      useClass: MikroOrmShowSheetMusicHistoryDataProvider,
-    },
-    ShowSheetMusicInVersionUseCase,
-    {
-      provide: ShowSheetMusicInVersionDataProvider,
-      useClass: MikroOrmShowSheetMusicInVersionDataProvider,
-    },
-    ShowCurrentSheetMusicUseCase,
-    {
-      provide: ShowCurrentSheetMusicDataProvider,
-      useClass: MikroOrmShowCurrentSheetMusicDataProvider,
-    },
-  ],
-})
-export class SheetMusicModule {}
+export enum Environment {
+  TESTING,
+  PRODUCTION,
+}
+
+@Module({})
+export class SheetMusicModule {
+  static register(environment: Environment): DynamicModule {
+    return {
+      module: SheetMusicModule,
+      imports: [CqrsModule, SharedModule, InfrastructureModule],
+      controllers: [SheetMusicRestController],
+      providers: [
+        SheetMusicFacade,
+        AddMeasureUseCase,
+        {
+          provide: MikroOrmEventStreamEntityRepository,
+          useFactory: (entityManager: EntityManager) =>
+            entityManager.getRepository(EventStreamEntity),
+          inject: [EntityManager],
+        },
+        {
+          provide: MeasureRepository,
+          useClass:
+            environment === Environment.PRODUCTION
+              ? MikroOrmMeasureRepository
+              : InMemoryMeasureRepository,
+        },
+        EventEntityMapper,
+        {
+          provide: EventStore,
+          useClass: MikroOrmEventStore,
+        },
+        {
+          provide: Transaction,
+          useClass:
+            environment === Environment.PRODUCTION
+              ? MikroOrmTransaction
+              : DirectExecutionTransaction,
+        },
+        AddNoteToMeasureUseCase,
+        RemoveNoteFromMeasureUseCase,
+        DeleteMeasureUseCase,
+        {
+          provide: DomainEventPublisher,
+          useClass:
+            environment === Environment.PRODUCTION
+              ? EventEmitterDomainEventPublisher
+              : MockedDomainEventPublisher,
+        },
+        ProjectionService,
+        SheetMusicInVersionProjector,
+        {
+          provide: SheetMusicInVersionRepository,
+          useClass: MikroOrmSheetMusicInVersionRepository,
+        },
+        DomainEventListener,
+        SheetMusicInVersionEntityMapper,
+        {
+          provide: MikroOrmSheetMusicInVersionEntityRepository,
+          useFactory: (entityManager: EntityManager) =>
+            entityManager.getRepository(SheetMusicInVersionEntity),
+          inject: [EntityManager],
+        },
+        MeasureCurrentProjector,
+        {
+          provide: MeasureCurrentRepository,
+          useClass: MikroOrmMeasureCurrentRepository,
+        },
+        {
+          provide: MikroOrmMeasureCurrentEntityRepository,
+          useFactory: (entityManager: EntityManager) =>
+            entityManager.getRepository(MeasureCurrentEntity),
+          inject: [EntityManager],
+        },
+        MeasureCurrentEntityMapper,
+        ShowSheetMusicHistoryUseCase,
+        {
+          provide: ShowSheetMusicHistoryDataProvider,
+          useClass: MikroOrmShowSheetMusicHistoryDataProvider,
+        },
+        ShowSheetMusicInVersionUseCase,
+        {
+          provide: ShowSheetMusicInVersionDataProvider,
+          useClass: MikroOrmShowSheetMusicInVersionDataProvider,
+        },
+        ShowCurrentSheetMusicUseCase,
+        {
+          provide: ShowCurrentSheetMusicDataProvider,
+          useClass: MikroOrmShowCurrentSheetMusicDataProvider,
+        },
+      ],
+    };
+  }
+}
